@@ -21,7 +21,7 @@ export default function Privacy() {
   const d = TEXTS[lang];
   const { controllerName, contactEmail, hosting, lastUpdate } = PRIVACY;
   const missing = [!controllerName && d.missingName, !contactEmail && d.missingEmail].filter(Boolean).join(d.and);
-  useEffect(() => window.scrollTo(0, 0), []);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
   const mail = contactEmail && <a className="text-spark underline" href={`mailto:${contactEmail}`}>{contactEmail}</a>;
   const garante = <a className="text-spark underline" href="https://www.garanteprivacy.it" target="_blank" rel="noreferrer">{d.garante}</a>;
 

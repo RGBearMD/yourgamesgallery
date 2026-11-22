@@ -7,6 +7,8 @@ import GameIndex from "./components/GameIndex";
 import FilterSheet from "./components/FilterSheet";
 import LibrarySwitch from "./components/LibrarySwitch";
 import CoverFlow from "./components/CoverFlow";
+import SplitFlow from "./components/SplitFlow";
+import Updates from "./components/Updates";
 import Timeline from "./components/Timeline";
 import About from "./components/About";
 import KofiButton from "./components/KofiButton";
@@ -189,7 +191,7 @@ export default function App() {
   // Dal menu: se il gioco non è ancora stato mostrato, allargo la lista fino a lui, poi scorro.
   function jumpTo(g) {
     const i = visible.findIndex((x) => x.id === g.id);
-    flushSync(() => { if (viewMode === "timeline") setViewMode("strip"); if (viewMode === "flow") setFlowId(g.id); if (i >= limit) setLimit(i + STEP); });
+    flushSync(() => { if (viewMode === "timeline") setViewMode("strip"); if (viewMode === "flow" || viewMode === "split") setFlowId(g.id); if (i >= limit) setLimit(i + STEP); });
     scrollToGame(g.id);
   }
 
@@ -238,6 +240,7 @@ export default function App() {
   const refresh = (p) => (p === "gog" ? importGog(store.gog.id) : importSteam(store.steam.id));
 
   if (hash === "#privacy") return <Privacy />; // pagina «Privacy e trasparenza»
+  if (hash === "#updates") return <Updates />; // pagina «Aggiornamenti»
 
   const tabBtn = (id) => (
     <button type="button" onClick={() => { setTab(id); setError(null); }}
@@ -248,6 +251,15 @@ export default function App() {
   const shown = visible.slice(0, limit);
   const dupProp = dupOnly ? dupOf : undefined; // il badge «Anche su …» si vede solo nella vista «giochi doppi»
   const pill = "flex items-center gap-1 rounded-full bg-spark px-2.5 py-1 text-xs font-bold text-ink";
+  const immersive = hasGames && viewMode === "split"; // la vista Split occupa tutta l'area sotto l'intestazione (il Dock resta sopra)
+  // Riga «n giochi · piattaforma · A–Z» + filtri attivi (non c'è nelle viste Cover Flow e Split, che usano tutto lo spazio)
+  const topRow = () => (
+    <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+      <span>{(genre || dupOnly ? t("list.countOf", { n: visible.length, total: games.length }) : t("list.count", { n: games.length }))} · {libPlatform.toUpperCase()} · A–Z</span>
+      {genre && <button onClick={() => pickGenre(null)} aria-label={t("list.removeGenre", { genre })} className={pill}>{genre} <Icon name="close" className="size-3" /></button>}
+      {dupOnly && <button onClick={toggleDup} aria-label={t("list.removeDups")} className={pill}>{t("list.dups")} <Icon name="close" className="size-3" /></button>}
+    </div>
+  );
   const stripView = hasGames && viewMode === "strip"; // nella Strip l'intestazione si allinea al contenitore da 4xl
   const sourceLabel = (a) => t(a.source === "profile" ? "src.profile" : a.source === "file" ? "src.file" : "src.saved");
   const errorText = error && (error.key ? t(error.key) : error.text || t("err.generic"));
@@ -276,7 +288,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1600px] flex-1 px-3 pb-32 pt-3 sm:px-5">
+      <main className={immersive ? "w-full flex-1" : `mx-auto w-full max-w-[1600px] flex-1 px-3 pb-32 sm:px-5 ${hasGames && viewMode === "flow" ? "pt-1" : "pt-3"}`}>
         {!hasGames ? (
           <div className="mx-auto max-w-3xl animate-fade-in">
             <section className="mx-auto mt-4 max-w-md text-center">
@@ -354,19 +366,20 @@ export default function App() {
             <About />
 
             <div className="mt-12 flex flex-col items-center gap-2 text-center">
-              <a href="#privacy" className="text-xs text-muted underline-offset-4 hover:text-fog hover:underline">{t("privacyLink")}</a>
+              <p className="flex items-center gap-4 text-xs text-muted">
+                <a href="#privacy" className="underline-offset-4 hover:text-fog hover:underline">{t("privacyLink")}</a>
+                <a href="#updates" className="underline-offset-4 hover:text-fog hover:underline">{t("updates.link")}</a>
+              </p>
               {PRIVACY.controllerName && <p className="text-[11px] text-muted">{t("createdBy", { name: PRIVACY.controllerName })}</p>}
             </div>
           </div>
         ) : (
           <div className={stripView ? "mx-auto w-full max-w-4xl" : ""}>
-            <div className="mb-4 flex flex-wrap items-center gap-2 text-sm text-muted">
-              <span>{(genre || dupOnly ? t("list.countOf", { n: visible.length, total: games.length }) : t("list.count", { n: games.length }))} · {libPlatform.toUpperCase()} · A–Z</span>
-              {genre && <button onClick={() => pickGenre(null)} aria-label={t("list.removeGenre", { genre })} className={pill}>{genre} <Icon name="close" className="size-3" /></button>}
-              {dupOnly && <button onClick={toggleDup} aria-label={t("list.removeDups")} className={pill}>{t("list.dups")} <Icon name="close" className="size-3" /></button>}
-            </div>
+            {viewMode !== "split" && viewMode !== "flow" && topRow()}
             {viewMode === "timeline" ? (
               <Timeline games={visible} meta={meta} done={analyzed} total={metaGames.length} onSelect={setSelectedGame} />
+            ) : viewMode === "split" ? (
+              visible.length ? <SplitFlow games={visible} meta={meta} focusId={flowId} onFocus={setFlowId} onSelect={setSelectedGame} /> : <p className="py-10 text-center text-sm text-muted">{dupOnly ? t("list.emptyDups") : t("list.emptyGenre")}</p>
             ) : viewMode === "flow" ? (
               visible.length ? <CoverFlow games={visible} meta={meta} focusId={flowId} onFocus={setFlowId} onSelect={setSelectedGame} /> : <p className="py-10 text-center text-sm text-muted">{dupOnly ? t("list.emptyDups") : t("list.emptyGenre")}</p>
             ) : (

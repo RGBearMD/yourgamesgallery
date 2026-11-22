@@ -1,0 +1,23 @@
+// Cronologia degli aggiornamenti mostrata nella pagina «#updates». Per aggiungere una versione: nuovo oggetto in CIMA,
+// data in formato ISO (aaaa-mm-gg), voci in italiano (sono le note di rilascio). La pagina le ordina dalla più recente.
+export const UPDATES = [
+  { date: "2026-05-22", items: ["added webonly images", "perfezionamento peso immagini e link a gioco", "Nuova webapp", "Pulsante copia", "Fix textarea", "Fix generate gallery", "Fix online gallery and image generation", "Testi corretti, aggiunta traduzioni, KoFi e abbellimento"] },
+  { date: "2026-05-25", items: ["nuovo wizard guidato", "UX redesigned", "Privacy e miglioramento bookmarklet", "New json immagini", "Fixing images e loading cleaner", "Aggiornamenti vari"] },
+  { date: "2026-05-27", items: ["Animazione dado grande «Randomize»"] },
+  { date: "2026-06-12", items: ["fix gog Api", "aggiunta nuova animazione dado e indice", "modifiche nuove introdotte anche da gemini", "fix screenshot", "nuovo flow a 3 riquadri", "New magic button", "nuovi flow alternativi single button", "home 3 box layout - flow", "Semplificazione interfaccia"] },
+  { date: "2026-06-13", items: ["correzione api screenshot no scraping", "correzione index e verifica console first game", "introduzione strip view", "miglioramento interfaccia e interazione modal", "debug strip view screenshot", "enhance strip view alleggerimento caricamento immagini", "debug e risoluzione bugs", "aggiunta 3 screenshot, risoluzione migliore", "fix click e aggiunta hover", "html analisi", "card cover + screenshot", "modal public profile help", "miglioramenti grafici"] },
+  { date: "2026-06-20", items: ["correzione strip e performance mobile", "correzione doppie copie", "correzioni visualizzazione strip fisarmonica", "rimozione ore di gioco", "correzioni interfaccia strip e menu in alto"] },
+  { date: "2026-09-17", items: ["Aggiunta 4 screenshot per gioco e Steam", "correzione screenshot"] },
+  { date: "2026-09-18", items: ["correzione strip e grid quadrata", "Update introduzione STEAM"] },
+  { date: "2026-09-19", items: ["correzione steam e gog", "Steam json test"] },
+  { date: "2026-10-07", items: ["Aggiornamento sito con Claude", "Velocizzazione, correzione caricamento screenshot, hamburger alfabetico, filtri, animazioni, diciture menu", "Pulizia file inutili"] },
+  { date: "2026-10-09", items: ["Alleggerimento e miglioramento interfaccia"] },
+  { date: "2026-10-12", items: ["privacy, font locali e app installer"] },
+  { date: "2026-10-13", items: ["miglioramento interfaccia, logo, rimozione json e codice"] },
+  { date: "2026-10-15", items: ["Correzione copertine orizzontali e dimensione", "miglioramento interfaccia e immagini"] },
+  { date: "2026-10-19", items: ["miglioramento responsive, selettore librerie, griglie"] },
+  { date: "2026-10-26", items: ["Correzione animazione dado e privacy"] },
+  { date: "2026-10-27", items: ["Update Privacy Mail"] },
+  { date: "2026-11-20", items: ["cover flow", "YGG new version"] },
+  { date: "2026-11-22", items: ["nuova vista vertical flow.", "correzione opacity sfondo.", "miglioramento interfaccia cover flow e split"] },
+];

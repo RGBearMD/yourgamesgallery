@@ -40,7 +40,10 @@ export default function GameIndex({ games, isOpen, onClose, onPick, onDownload, 
           </button>
           <KofiButton compact />
           <div className="flex items-center justify-between gap-2">
-            <a href="#privacy" onClick={onClose} className="text-xs text-muted hover:text-fog">{t("privacyLink")}</a>
+            <span className="flex items-center gap-3">
+              <a href="#privacy" onClick={onClose} className="text-xs text-muted hover:text-fog">{t("privacyLink")}</a>
+              <a href="#updates" onClick={onClose} className="text-xs text-muted hover:text-fog">{t("updates.link")}</a>
+            </span>
             <LangToggle />
           </div>
           <button onClick={onHome} className="flex w-full items-center justify-center gap-2 rounded-lg border border-line py-2.5 text-xs font-semibold hover:bg-raised">

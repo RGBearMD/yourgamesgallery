@@ -10,6 +10,7 @@ const PATHS = {
   next: "M9 5l7 7-7 7",
   upload: "M12 16V4m0 0L8 8m4-4l4 4M5 20h14",
   flow: "M8 5h8v14H8zM3 8h3v8H3zM18 8h3v8h-3z",
+  split: "M3 4h6v16H3zM11 4h10v7H11zM11 13h10v7H11z",
   timeline: "M3 20h18M6 20v-8m6 8V5m6 15v-5",
   image: "M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M9 9h.01",
   layers: "M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5",

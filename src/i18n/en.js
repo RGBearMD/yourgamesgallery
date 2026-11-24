@@ -15,9 +15,9 @@ export default {
   "aria.shotsOf": "{title}, screenshot {i}",
   "aria.lightbox": "Screenshot {i} of {n}",
 
-  "hero.h2": "Rediscover your game library, not just from its covers",
-  "hero.p": "YGG lets you browse all your GOG and Steam games, screenshots included. It also offers a timeline view and filters.",
-  "hero.tagline": "Fast, free, private, and always with you on every device",
+  "hero.h2": "Your game library deserves more than a list",
+  "hero.p": "Browse your GOG and Steam games through covers, screenshots and multiple visual layouts. Rediscover your collection, one game at a time.",
+  "hero.tagline": "Fast, free, private and available on all your devices — even offline.",
 
   "libs.title": "Your saved libraries",
   "libs.open": "Open",

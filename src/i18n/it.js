@@ -15,9 +15,9 @@ export default {
   "aria.shotsOf": "{title}, screenshot {i}",
   "aria.lightbox": "Screenshot {i} di {n}",
 
-  "hero.h2": "Riscopri la tua libreria di giochi non solo dalle copertine",
-  "hero.p": "YGG permette di visualizzare tutti i propri giochi GOG e Steam comprensivi di screenshot. Inoltre offre una visualizzazione per linea del tempo e per filtri.",
-  "hero.tagline": "Rapida, gratuita, privata e sempre con te su ogni dispositivo",
+  "hero.h2": "La tua collezione di giochi merita più di una semplice lista",
+  "hero.p": "Sfoglia i tuoi giochi GOG e Steam tra copertine, screenshot e diverse modalità di visualizzazione. Riscopri la tua collezione e trova la tua prossima avventura.",
+  "hero.tagline": "Veloce, gratuita, riservata e disponibile su tutti i tuoi dispositivi, anche offline.",
 
   "libs.title": "Le tue librerie salvate",
   "libs.open": "Apri",

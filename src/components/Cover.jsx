@@ -4,7 +4,7 @@ import { coverUrl, resizedUrl } from "../services/gameData";
 // se non risponde si ripiega sull'originale, e poi sull'immagine orizzontale.
 export default function Cover({ game, wide = false, lowPriority = false, width, className = "" }) {
   const original = wide ? game.cover : coverUrl(game);
-  const chain = [...new Set([width && original ? resizedUrl(original, width) : null, original, game.cover].filter(Boolean))];
+  const chain = [...new Set([width && original && !original.startsWith("/") ? resizedUrl(original, width) : null, original, game.cover].filter(Boolean))];
   if (!chain.length) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-raised to-panel p-1 text-center font-display text-lg font-bold text-muted" aria-label={game.title}>

@@ -1,5 +1,5 @@
 // Service worker minimale: rende l'app installabile e apribile anche offline.
-// Conserva SOLO i file dell'app. Non tocca le chiamate alle funzioni (/.netlify/*) né le immagini di Steam/GOG.
+// Conserva SOLO i file dell'app (e le immagini della demo). Non tocca le chiamate alle funzioni (/.netlify/*) né le immagini di Steam/GOG.
 const CACHE = "ygg-__BUILD_ID__"; // il numero cambia a ogni build (vedi vite.config.js)
 
 self.addEventListener("install", (e) => {
@@ -26,8 +26,8 @@ self.addEventListener("fetch", (e) => {
         .then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put("/", copy)); } return res; })
         .catch(() => caches.match("/"))
     );
-  } else if (url.pathname.startsWith("/assets/")) {
-    // File con l'hash nel nome: non cambiano mai, quindi prima la copia salvata.
+  } else if (url.pathname.startsWith("/assets/") || url.pathname.startsWith("/demo/")) {
+    // File con l'hash nel nome (/assets) o immagini della demo (la cache cambia a ogni build): prima la copia salvata.
     e.respondWith(
       caches.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); } return res; }))
     );

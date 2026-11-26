@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 // Giochi Epic: se trovati nel catalogo Steam hanno id "steam-<appId>" (quindi dati e immagini di Steam) ma platform "Epic";
 // gli altri (solo Epic) non hanno nessuna fonte di screenshot, anno o generi.
 export const isEpic = (g) => g?.platform === "Epic";
+// Giochi della libreria DEMO (src/data/demo.js): immagini e dati sono locali, nessuna richiesta di rete
+export const isDemo = (g) => g?.platform === "Demo";
 export const isSteam = (g) => g?.platform === "Steam" || g?.appId != null || String(g?.id).startsWith("steam-");
 const steamAppId = (g) => g.appId ?? parseInt(String(g.id).replace("steam-", ""), 10);
 
@@ -13,9 +15,9 @@ export const coverUrl = (g) =>
     : g.cover;
 
 export const isEpicOnly = (g) => isEpic(g) && !isSteam(g);
-export const isLandscape = (g) => !isSteam(g) && !isEpic(g); // copertina orizzontale: solo GOG
-export const platformName = (g) => (isEpic(g) ? "Epic" : isSteam(g) ? "Steam" : "GOG");
-export const platformClasses = (g) => (isEpic(g) ? "bg-epic/15 text-epic" : isSteam(g) ? "bg-steam/15 text-steam" : "bg-gog/15 text-gog");
+export const isLandscape = (g) => !isSteam(g) && !isEpic(g) && !isDemo(g); // copertina orizzontale: solo GOG
+export const platformName = (g) => (isDemo(g) ? "Demo" : isEpic(g) ? "Epic" : isSteam(g) ? "Steam" : "GOG");
+export const platformClasses = (g) => (isDemo(g) ? "bg-spark/15 text-spark" : isEpic(g) ? "bg-epic/15 text-epic" : isSteam(g) ? "bg-steam/15 text-steam" : "bg-gog/15 text-gog");
 
 export const hoursPlayed = (g, locale = "it-IT") => (Math.round(((g.playtime || 0) / 60) * 10) / 10).toLocaleString(locale);
 
@@ -112,6 +114,7 @@ function cached(key) {
 }
 
 export async function fetchDetails(game) {
+  if (isDemo(game)) return { shots: game.screenshots || [], year: game.year ?? null, dev: game.developers || [], pub: game.publishers || [], failed: false }; // dati già inclusi nell'app
   if (isEpicOnly(game)) return { shots: [], year: null, dev: [], pub: [], failed: false }; // nessuna fonte di dettagli per i giochi solo-Epic
   const key = String(game.id);
   const hit = cached(key);

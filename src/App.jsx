@@ -6,6 +6,7 @@ import GameModal from "./components/GameModal";
 import GameIndex from "./components/GameIndex";
 import FilterSheet from "./components/FilterSheet";
 import LibrarySwitch from "./components/LibrarySwitch";
+import { DEMO_GAMES } from "./data/demo";
 import CoverFlow from "./components/CoverFlow";
 import SplitFlow from "./components/SplitFlow";
 import Updates from "./components/Updates";
@@ -38,8 +39,8 @@ const OLD_KEY = "ygg:library:v1";  // formato precedente (una sola libreria): vi
 const STEP = 24; // giochi mostrati per volta (caricamento progressivo)
 const EMPTY = [];
 const PLATFORMS = ["gog", "steam", "epic"];
-const NAME = { gog: "GOG", steam: "Steam", epic: "Epic" };
-const DOT = { gog: "bg-gog", steam: "bg-steam", epic: "bg-epic" };
+const NAME = { gog: "GOG", steam: "Steam", epic: "Epic", demo: "Demo" };
+const DOT = { gog: "bg-gog", steam: "bg-steam", epic: "bg-epic", demo: "bg-spark" };
 const TAB_ON = { gog: "bg-gog text-ink", steam: "bg-steam text-ink", epic: "bg-epic text-ink" };
 const SKIP_GENRES = new Set(["Violent", "Gore", "Nudity", "Sexual Content", "Early Access", "Free To Play", "Free to Play"]);
 const MAX_FILE = 5 * 1024 * 1024;
@@ -68,6 +69,7 @@ const canRefresh = (p, a) => (p === "gog" ? !!a.id : p === "steam" ? a.source ==
 export default function App() {
   const { t, locale } = useI18n();
   const [store, setStore] = useState(loadStore);
+  const [demo, setDemo] = useState(false); // libreria DEMO: solo in memoria, mai salvata né mescolata alle librerie dell'utente
   const [inLibrary, setInLibrary] = useState(() => !!store[store.last]?.games?.length); // l'app si riapre sull'ultima libreria
   const [tab, setTab] = useState(store.last || "gog");
   const [username, setUsername] = useState(store.gog?.id || "");
@@ -80,6 +82,8 @@ export default function App() {
   const [filterOpen, setFilterOpen] = useState(false);
   const [switchOpen, setSwitchOpen] = useState(false);
   const [viewMode, setViewMode] = useState("strip");
+  // Cambiando vista verso Cover Flow o Split la pagina riparte sempre dall'inizio (altrimenti resta lo scroll della lista precedente)
+  useEffect(() => { if (viewMode === "flow" || viewMode === "split") window.scrollTo({ top: 0 }); }, [viewMode]);
   const [showHelp, setShowHelp] = useState(false);
   const [limit, setLimit] = useState(STEP);
   const [genre, setGenre] = useState(null);
@@ -88,8 +92,8 @@ export default function App() {
   const [roll, setRoll] = useState(null); // gioco scelto dal dado mentre il dado gira
   const epicInput = useRef(null);
 
-  const libPlatform = store.last;
-  const rawGames = (inLibrary && store[libPlatform]?.games) || EMPTY;
+  const libPlatform = demo ? "demo" : store.last;
+  const rawGames = (demo ? DEMO_GAMES : inLibrary && store[libPlatform]?.games) || EMPTY;
   // Ordine alfabetico (ignora maiuscole, accenti, punteggiatura e «The» iniziale; numeri in ordine naturale)
   const games = useMemo(() => {
     if (rawGames === EMPTY) return EMPTY;
@@ -107,7 +111,7 @@ export default function App() {
   // Giochi presenti anche in un'altra libreria salvata (confronto per titolo, sul dispositivo)
   const dupOf = useMemo(() => {
     const result = new Map();
-    const others = PLATFORMS.filter((p) => p !== libPlatform && store[p]);
+    const others = demo ? [] : PLATFORMS.filter((p) => p !== libPlatform && store[p]);
     if (!others.length) return result;
     const keys = Object.fromEntries(others.map((p) => [p, new Set(store[p].games.map((g) => normalizeTitle(g.title)))]));
     for (const g of games) {
@@ -116,7 +120,7 @@ export default function App() {
       if (where.length) result.set(g.id, where);
     }
     return result;
-  }, [games, store, libPlatform]);
+  }, [games, store, libPlatform, demo]);
 
   // Giochi visibili (dopo i filtri per genere e «giochi doppi») e conteggi per il pannello «Filtra»
   const visible = useMemo(
@@ -151,6 +155,7 @@ export default function App() {
   }, [roll]);
 
   function show(plat) {
+    setDemo(false);
     setStore((s) => ({ ...s, last: plat }));
     setInLibrary(true);
     setGenre(null);
@@ -159,6 +164,16 @@ export default function App() {
     setSelectedGame(null);
     setError(null);
     setSwitchOpen(false);
+    window.scrollTo({ top: 0 });
+  }
+  function openDemo() {
+    setDemo(true);
+    setInLibrary(true);
+    setGenre(null);
+    setDupOnly(false);
+    setLimit(STEP);
+    setSelectedGame(null);
+    setError(null);
     window.scrollTo({ top: 0 });
   }
   function openAccount(plat, entry) {
@@ -175,17 +190,19 @@ export default function App() {
     });
   }
   function goHome() {
+    setDemo(false);
     setInLibrary(false);
     setGenre(null);
     setDupOnly(false);
     setIndexOpen(false);
     setSwitchOpen(false);
-    setTab(libPlatform || tab);
+    setTab(demo ? tab : libPlatform || tab);
     window.scrollTo({ top: 0 });
   }
 
   const more = useCallback(() => setLimit((l) => l + STEP), []);
   const pickGenre = (name) => { setGenre(name); setLimit(STEP); setFilterOpen(false); window.scrollTo({ top: 0 }); };
+  const clearFilters = () => { setGenre(null); setDupOnly(false); setLimit(STEP); setFilterOpen(false); window.scrollTo({ top: 0 }); };
   const toggleDup = () => { setDupOnly((d) => !d); setLimit(STEP); setFilterOpen(false); window.scrollTo({ top: 0 }); };
 
   // Dal menu: se il gioco non è ancora stato mostrato, allargo la lista fino a lui, poi scorro.
@@ -277,7 +294,12 @@ export default function App() {
               <span className="truncate font-display text-sm font-bold tracking-tight">Your Games Gallery</span>
             </button>
           </h1>
-          {hasGames && saved.length >= 2 && (
+          {hasGames && demo && (
+            <button onClick={goHome} aria-label={t("demo.exit")} className="flex shrink-0 items-center gap-1.5 rounded-lg bg-spark px-3 py-2 text-xs font-bold text-ink hover:brightness-110">
+              {t("demo.badge")} <Icon name="close" className="size-3.5" />
+            </button>
+          )}
+          {hasGames && !demo && saved.length >= 2 && (
             <button onClick={() => setSwitchOpen(true)} aria-label={t("aria.switchLib")} className="flex shrink-0 items-center gap-1.5 rounded-lg bg-raised px-3 py-2 text-xs font-semibold hover:bg-line">
               <span className={`size-2 rounded-full ${DOT[libPlatform]}`} />
               {NAME[libPlatform]}
@@ -296,7 +318,12 @@ export default function App() {
                 className="animate-float mx-auto h-auto w-56 drop-shadow-[0_14px_28px_rgba(167,139,250,0.28)]" />
               <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight md:text-4xl">{t("hero.h2")}</h2>
               <p className="mt-3 text-sm text-muted">{t("hero.p")}</p>
-              <p className="mb-6 mt-2 text-sm font-semibold text-fog/90">{t("hero.tagline")}</p>
+              <p className="mb-5 mt-2 text-sm font-semibold text-fog/90">{t("hero.tagline")}</p>
+
+              <div className="mb-6">
+                <button onClick={openDemo} className="w-full rounded-xl border-2 border-spark bg-spark/10 py-3 font-display text-base font-bold text-spark transition hover:bg-spark hover:text-ink">{t("demo.button")}</button>
+                <p className="mt-1.5 text-xs text-muted">{t("demo.sub")}</p>
+              </div>
 
               {saved.length > 0 && (
                 <div className="mb-6 text-left">
@@ -395,7 +422,7 @@ export default function App() {
 
       {!hasGames && <div className="fixed bottom-4 right-4 z-30 pb-[env(safe-area-inset-bottom)]"><KofiButton floating /></div>}
       {hasGames && <Dock mode={viewMode} filterActive={!!genre || dupOnly || filterOpen} rolling={!!roll} onMode={setViewMode} onFilter={() => setFilterOpen(true)} onRandom={pickRandomGame} />}
-      <FilterSheet open={filterOpen} onClose={() => setFilterOpen(false)} counts={genreCounts} active={genre} onPick={pickGenre} done={analyzed} total={metaGames.length}
+      <FilterSheet open={filterOpen} onClose={() => setFilterOpen(false)} counts={genreCounts} active={genre} onPick={pickGenre} onClear={clearFilters} done={analyzed} total={metaGames.length}
         dup={{ libraries: saved.length, count: dupOf.size, active: dupOnly, onToggle: toggleDup }} />
       <LibrarySwitch open={switchOpen} onClose={() => setSwitchOpen(false)} current={libPlatform} onPick={show} onManage={goHome}
         libraries={saved.map((p) => ({ platform: p, label: accountLabel(p, store[p]), count: store[p].games.length }))} />

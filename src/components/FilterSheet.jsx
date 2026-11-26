@@ -2,7 +2,7 @@ import { Icon } from "./Icons";
 import { useI18n } from "../i18n/context";
 
 // Pannello «Filtra»: scorre dal basso, con i generi e quanti giochi ha ciascuno.
-export default function FilterSheet({ open, onClose, counts, active, onPick, done, total, dup }) {
+export default function FilterSheet({ open, onClose, counts, active, onPick, onClear, done, total, dup }) {
   const { t } = useI18n();
   if (!open) return null;
   const chip = (on) =>
@@ -16,6 +16,11 @@ export default function FilterSheet({ open, onClose, counts, active, onPick, don
           <h2 className="text-lg font-bold">{t("filter.title")}</h2>
           <button onClick={onClose} aria-label={t("aria.close")} className="rounded-full p-1.5 text-muted hover:text-fog"><Icon name="close" /></button>
         </div>
+
+        <button onClick={onClear} className="mb-3 flex w-full items-center justify-between gap-3 rounded-xl bg-spark px-4 py-3 text-left text-sm font-bold text-ink transition-opacity hover:opacity-90">
+          <span>{t("filter.all")}</span>
+          <span className="text-base">{total}</span>
+        </button>
 
         {dup.libraries >= 2 ? (
           <button onClick={dup.onToggle} aria-pressed={dup.active} className={`mb-3 flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold transition-colors ${dup.active ? "bg-spark text-ink" : "bg-panel text-fog hover:bg-raised"}`}>
@@ -34,7 +39,6 @@ export default function FilterSheet({ open, onClose, counts, active, onPick, don
         )}
 
         <div className="custom-scrollbar flex flex-wrap gap-2 overflow-y-auto">
-          <button onClick={() => onPick(null)} className={chip(!active)}>{t("filter.all")} <span className="opacity-60">{total}</span></button>
           {counts.map(([name, n]) => (
             <button key={name} onClick={() => onPick(name)} className={chip(active === name)}>
               {name} <span className="opacity-60">{n}</span>

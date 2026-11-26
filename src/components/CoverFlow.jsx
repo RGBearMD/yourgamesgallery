@@ -86,7 +86,7 @@ export default function CoverFlow({ games, meta = {}, focusId, onFocus, onSelect
     <section aria-label={t("flow.aria")} className="mx-auto flex w-full max-w-5xl flex-col sm:h-[max(26rem,calc(100dvh-8.25rem))]" style={{ "--shot-max": SHOT_MAX }}>
       <div
         {...bind}
-        className="relative flex h-[58dvh] min-h-[26rem] cursor-grab select-none flex-col overflow-hidden rounded-2xl bg-ink outline-none active:cursor-grabbing sm:h-auto sm:min-h-0 sm:flex-1"
+        className="relative flex touch-none [&_*]:touch-none h-[58dvh] min-h-[26rem] cursor-grab select-none flex-col overflow-hidden rounded-2xl bg-ink outline-none active:cursor-grabbing sm:h-auto sm:min-h-0 sm:flex-1"
       >
         {bg && (
           <>

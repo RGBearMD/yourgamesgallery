@@ -100,7 +100,7 @@ export default function SplitFlow({ games, meta = {}, focusId, onFocus, onSelect
         ref={column}
         {...bind}
         style={{ ...bind.style, perspective: "900px" }}
-        className="relative cursor-grab select-none overflow-hidden bg-gradient-to-r from-panel/70 to-ink outline-none active:cursor-grabbing"
+        className="relative touch-none [&_*]:touch-none cursor-grab select-none overflow-hidden bg-gradient-to-r from-panel/70 to-ink outline-none active:cursor-grabbing"
       >
         {items}
         <button type="button" aria-label={t("split.prev")} onClick={() => step(-1)} disabled={index === 0} className={`${arrow} top-10`}><Icon name="prev" className="size-4 rotate-90" /></button>

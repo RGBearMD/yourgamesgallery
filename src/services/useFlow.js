@@ -123,7 +123,7 @@ export function useFlow({ games, focusId, onFocus, onEnter, axis = "x", dragPx =
     onKeyDown, onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp,
     onDragStart: (e) => e.preventDefault(),
     onContextMenu: (e) => e.preventDefault(),
-    style: { touchAction: horizontal ? "pan-y" : "none", WebkitTouchCallout: "none", WebkitUserSelect: "none" },
+    style: { touchAction: "none", overscrollBehavior: "contain", WebkitTouchCallout: "none", WebkitUserSelect: "none" },
   };
 
   return { pos, index, current, active, last, goTo, step, moved, elRef, bind };

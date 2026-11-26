@@ -1,7 +1,7 @@
 // Cronologia degli aggiornamenti mostrata nella pagina «#updates». Per aggiungere una versione: nuovo oggetto in CIMA,
 // data in formato ISO (aaaa-mm-gg), voci in italiano (sono le note di rilascio). La pagina le ordina dalla più recente.
 export const UPDATES = [
-  { date: "2026-11-26", items: ["nuova modalità Demo: libreria di esempio per provare il sito senza inserire dati", "Cover Flow e Split: la pagina riparte dall'inizio", "pulsante Togli filtri"] },
+  { date: "2026-11-26", items: ["demo ampliata a 24 giochi (più titoli nello stesso anno in Timeline)", "nuova modalità Demo: libreria di esempio per provare il sito senza inserire dati", "Cover Flow e Split: la pagina riparte dall'inizio", "pulsante Togli filtri"] },
   // (le date più vecchie restano qui sotto: la pagina le ordina comunque dalla più recente)
   { date: "2026-05-22", items: ["added webonly images", "perfezionamento peso immagini e link a gioco", "Nuova webapp", "Pulsante copia", "Fix textarea", "Fix generate gallery", "Fix online gallery and image generation", "Testi corretti, aggiunta traduzioni, KoFi e abbellimento"] },
   { date: "2026-05-25", items: ["nuovo wizard guidato", "UX redesigned", "Privacy e miglioramento bookmarklet", "New json immagini", "Fixing images e loading cleaner", "Aggiornamenti vari"] },
